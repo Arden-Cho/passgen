@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>PassGen</title>
+  <link rel="icon" type="image/x-icon" href="/images/favicon.png">
+  <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+  <script src="script.js"></script>
+  <script src="dist/clipboard.min.js"></script>
+  <div class="box">
+    <h2>Generate Password</h2>
+    <input type="text" name="" placeholder="Click the Generate button!" id="password" readonly>
+    <table>
+    <th><div id="button" class="btn1"onclick="genPassword()">Generate</div></th>
+    <th><a id="button" class="btn2" onclick="copyPassword()">Copy</a></th>
+</table>
+  </div>
+  <div id="btnhelp" onclick="getHelp()">Help</div>
+  <div id="btnback" onclick="goBack()">Back</div>
+</body>
+
+</html>
