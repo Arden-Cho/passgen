@@ -1,1 +1,1 @@
-A easy to use password generator.
+An easy to use password generator.
