@@ -69,7 +69,7 @@ fn generate_password(args: &Args) -> String {
                     args.upper = false;
                 } else if c.is_ascii_lowercase() {
                     args.lower = false;
-                } else if c.is_numeric() {
+                } else if c.is_ascii_digit() {
                     args.numbers = false;
                 } else {
                     args.special = false;
