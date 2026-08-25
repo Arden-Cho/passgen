@@ -1,7 +1,7 @@
 use std::process::exit;
 
 pub fn log(msg: &str) {
-    eprintln!("passgen: fatal: {msg}");
+    eprintln!("passgen: warn: {msg}");
 }
 
 /// Terminate the program with an error message and an exit code of 1.
