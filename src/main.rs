@@ -44,20 +44,20 @@ fn validate_args(args: &Args) {
 
 fn generate_password(args: &Args) -> String {
     let chars = {
-        let mut s = String::new();
+        let mut bytes = Vec::with_capacity(70);
         if args.upper {
-            s += "QWERTYUIOPASDFGHJKLZXCVBNM";
+            bytes.extend_from_slice(b"QWERTYUIOPASDFGHJKLZXCVBNM");
         }
         if args.lower {
-            s += "qwertyuiopasdfghjklzxcvbnm";
+            bytes.extend_from_slice(b"qwertyuiopasdfghjklzxcvbnm");
         }
         if args.numbers {
-            s += "1234567890";
+            bytes.extend_from_slice(b"1234567890");
         }
         if args.special {
-            s += "!@#$%^&*";
+            bytes.extend_from_slice(b"!@#$%^&*");
         }
-        s.into_bytes()
+        bytes
     };
     let mut password: String = String::with_capacity(args.length as usize);
     loop {
