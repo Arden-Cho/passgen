@@ -1,10 +1,8 @@
 mod utils;
 
 use clap::Parser;
-use rand::RngExt;
-use utils::fatal;
 
-use crate::utils::log;
+use crate::utils::{fatal, log, random_range_usize};
 
 #[derive(Parser, Clone)]
 #[command(version, about)]
@@ -61,13 +59,12 @@ fn generate_password(args: &Args) -> String {
         }
         s.into_bytes()
     };
-    let mut rng = rand::rng();
     let mut password: String;
     loop {
         let mut args = args.clone();
         password = (0..args.length)
             .map(|_| {
-                let idx = rng.random_range(0..chars.len());
+                let idx = random_range_usize(0..chars.len());
                 let c = chars[idx] as char;
                 if c.is_ascii_uppercase() {
                     args.upper = false;
