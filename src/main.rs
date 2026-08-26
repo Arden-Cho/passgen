@@ -1,91 +1,12 @@
+mod args;
+mod generators;
 mod utils;
 
 use clap::Parser;
 
-use crate::utils::{fatal, log, random_range_usize};
-
-#[derive(Parser, Clone)]
-#[command(version, about)]
-struct Args {
-    /// Include uppercase characters
-    #[arg(short, long)]
-    upper: bool,
-
-    /// Include lowercase characters
-    #[arg(short, long)]
-    lower: bool,
-
-    /// Include numbers
-    #[arg(short, long)]
-    numbers: bool,
-
-    /// Include special characters [!@#$%^&*]
-    #[arg(short, long)]
-    special: bool,
-
-    /// The length of the password
-    #[arg(short = 'L', long, default_value_t = 16)]
-    length: u8,
-}
-
-fn validate_args(args: &Args) {
-    let active_group_count =
-        args.upper as u8 + args.lower as u8 + args.numbers as u8 + args.special as u8;
-    if active_group_count == 0 {
-        fatal("must choose at least one group of characters (see --help)");
-    }
-    if active_group_count > args.length {
-        fatal("generating a password of this length is impossible with the chosen groups");
-    }
-    if args.length < 8 {
-        log("weak password - a password with a length < 8 could be easily brute-forced");
-    }
-}
-
-fn generate_password(args: &Args) -> String {
-    let chars = {
-        let mut bytes = Vec::with_capacity(70);
-        if args.upper {
-            bytes.extend_from_slice(b"QWERTYUIOPASDFGHJKLZXCVBNM");
-        }
-        if args.lower {
-            bytes.extend_from_slice(b"qwertyuiopasdfghjklzxcvbnm");
-        }
-        if args.numbers {
-            bytes.extend_from_slice(b"1234567890");
-        }
-        if args.special {
-            bytes.extend_from_slice(b"!@#$%^&*");
-        }
-        bytes
-    };
-    let mut password: String = String::with_capacity(args.length as usize);
-    loop {
-        let mut args = args.clone();
-        password.extend((0..args.length).map(|_| {
-            let idx = random_range_usize(0..chars.len());
-            let c = chars[idx] as char;
-            if c.is_ascii_uppercase() {
-                args.upper = false;
-            } else if c.is_ascii_lowercase() {
-                args.lower = false;
-            } else if c.is_ascii_digit() {
-                args.numbers = false;
-            } else {
-                args.special = false;
-            }
-            c
-        }));
-        if !(args.upper || args.lower || args.numbers || args.special) {
-            break;
-        }
-        password.clear();
-    }
-    password
-}
+use crate::{args::Args, generators::generate_password};
 
 fn main() {
-    let args = Args::parse();
-    validate_args(&args);
+    let args = Args::parse().normalize();
     println!("{}", generate_password(&args));
 }
