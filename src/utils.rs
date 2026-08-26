@@ -1,11 +1,17 @@
 use std::{process::exit, ops::Range};
 
-pub fn log(msg: &str) {
-    eprintln!("passgen: warn: {msg}");
+use colored::Colorize;
+
+pub fn log(prefix: &dyn std::fmt::Display, msg: &dyn std::fmt::Display) {
+    eprintln!("passgen: {prefix}: {msg}");
+}
+
+pub fn log_warn(msg: &str) {
+    log(&"warn".yellow().bold(), &msg);
 }
 
 pub fn fatal(msg: &str) -> ! {
-    eprintln!("passgen: fatal: {msg}");
+    log(&"fatal".red().bold(), &msg);
     exit(1)
 }
 
@@ -20,4 +26,9 @@ pub fn random_range_usize(range: Range<usize>) -> usize {
             return range.start + r % (range.end - range.start);
         }
     }
+}
+
+
+pub fn calc_entropy(length: f64, pool_size: f64) -> f64 {
+    pool_size.log2() * length
 }

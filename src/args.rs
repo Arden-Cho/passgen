@@ -1,8 +1,13 @@
 use clap::Parser;
 
-use crate::utils::{fatal, log};
+use crate::utils::{fatal, log_warn};
 
 
+/// A password generator
+/// 
+/// If no option is specified the program is run as below
+/// 
+/// passgen -ulnL 16
 #[derive(Parser, Clone)]
 #[command(version, about)]
 pub struct Args {
@@ -25,6 +30,12 @@ pub struct Args {
     /// The length of the password
     #[arg(short = 'L', long, default_value_t = 16)]
     pub length: u8,
+
+    /// Output the ESTIMATED entropy of the password
+    /// 
+    /// This could give you a rough idea of how strong the password generated is.
+    #[arg(short, long)]
+    pub entropy: bool,
 }
 
 impl Args {
@@ -37,7 +48,7 @@ impl Args {
             fatal("generating a password of this length is impossible with the chosen groups (see --help)");
         }
         if self.length < 8 {
-            log("weak password - a password with a length < 8 could be easily brute-forced");
+            log_warn("weak password - a password with a length < 8 could be easily brute-forced");
         }
     }
 
