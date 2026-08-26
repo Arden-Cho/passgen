@@ -12,15 +12,19 @@ struct Args {
     /// Include uppercase characters
     #[arg(short, long)]
     upper: bool,
+
     /// Include lowercase characters
     #[arg(short, long)]
     lower: bool,
+
     /// Include numbers
     #[arg(short, long)]
     numbers: bool,
+
     /// Include special characters [!@#$%^&*]
     #[arg(short, long)]
     special: bool,
+    
     /// The length of the password
     #[arg(short = 'L', long, default_value_t = 16)]
     length: u8,
