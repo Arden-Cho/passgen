@@ -15,13 +15,16 @@ pub fn generate(args: &AppArgs) -> String {
 
 fn generate_passphrase(args: &AppArgs) -> String {
     let mut password = String::new();
-    for _ in 0..args.length {
+    for i in 0..args.length {
         let word = wordlist::WORDS[random_range_usize(0..WORDS.len())];
         password += args
             .upper
             .then(|| word[0..1].to_ascii_uppercase() + &word[1..])
             .as_deref()
             .unwrap_or(word);
+        if i != args.length - 1 {
+            password += " ";
+        }
     }
     password
 }
