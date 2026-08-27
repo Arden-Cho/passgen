@@ -4,10 +4,10 @@ mod utils;
 
 use clap::Parser;
 
-use crate::{args::Args, generators::generate_password, utils::log};
+use crate::{args::CliArgs, generators::generate_password, utils::log};
 
 fn main() {
-    let args = Args::parse().normalize();
+    let args = CliArgs::parse().normalize();
     if args.entropy {
         let entropy = args.get_entropy();
         log(

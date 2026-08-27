@@ -1,6 +1,6 @@
-use crate::{args::Args, utils::random_range_usize};
+use crate::{args::AppArgs, utils::random_range_usize};
 
-pub fn generate_password(args: &Args) -> String {
+pub fn generate_password(args: &AppArgs) -> String {
     let chars = args.get_charset();
     let mut password: String = String::with_capacity(args.length as usize);
     loop {
