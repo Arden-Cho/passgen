@@ -10,7 +10,7 @@ use crate::utils::{fatal, log_warn};
 /// If no option is specified the program is run as below
 ///
 /// passgen -ulnL 16
-#[derive(Parser, Clone)]
+#[derive(Parser)]
 #[command(version, about)]
 pub struct CliArgs {
     /// Include uppercase characters
