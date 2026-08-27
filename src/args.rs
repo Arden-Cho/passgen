@@ -1,9 +1,8 @@
-use std::num::NonZeroU8;
+use std::num::{NonZeroU8, NonZeroU32};
 
 use clap::Parser;
-use colored::{ColoredString, Colorize};
 
-use crate::{utils::fatal, wordlist};
+use crate::{password_strength::PasswordStrength, utils::fatal, wordlist};
 
 /// A password generator
 ///
@@ -37,6 +36,10 @@ pub struct CliArgs {
     #[arg(short, long)]
     passphrase: bool,
 
+    /// Generate multiple passwords at once
+    #[arg(short, long, default_value_t = NonZeroU32::new(1).unwrap())]
+    count: NonZeroU32,
+
     /// The length of the password
     #[arg(short = 'L', long)]
     length: Option<NonZeroU8>,
@@ -66,6 +69,7 @@ pub struct AppArgs {
     pub special: bool,
     pub no_ambiguous: bool,
     pub passphrase: bool,
+    pub count: u32,
     pub length: u8,
     pub entropy: bool,
 }
@@ -102,6 +106,7 @@ impl AppArgs {
             special: args.special,
             no_ambiguous: args.no_ambiguous,
             passphrase: args.passphrase,
+            count: args.count.get(),
             length: length,
             entropy: args.entropy,
         }
@@ -134,7 +139,7 @@ impl AppArgs {
         bytes
     }
 
-    pub fn get_entropy(&self) -> (f64, (ColoredString, u8)) {
+    pub fn get_entropy(&self) -> (f64, PasswordStrength) {
         let entropy = (if self.passphrase {
             wordlist::WORDS.len()
         } else {
@@ -145,12 +150,12 @@ impl AppArgs {
         (
             entropy,
             match entropy {
-                0.0..35.0 => ("very weak".red().bold(), 0),
-                35.0..59.0 => ("weak".yellow().bold(), 1),
-                59.0..79.0 => ("good".blue().bold(), 2),
-                79.0.. => ("strong".green().bold(), 3),
+                0.0..35.0 => PasswordStrength::VeryWeak,
+                35.0..59.0 => PasswordStrength::Weak,
+                59.0..79.0 => PasswordStrength::Good,
+                79.0.. => PasswordStrength::Strong,
                 _ => {
-                    unreachable!("BUG: Args::get_entropy")
+                    unreachable!("BUG: get_entropy")
                 }
             },
         )

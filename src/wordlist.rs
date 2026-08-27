@@ -1,6 +1,6 @@
 /// This file is directly generated from the EFF Large Wordlist
 /// https://www.eff.org/files/2016/07/18/eff_large_wordlist.txt
-/// 
+///
 /// Do not alter this source file
 
 pub const WORDS: [&'static str; 7776] = [
