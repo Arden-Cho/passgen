@@ -1,8 +1,8 @@
-use std::{ops::Range, process::exit};
+use std::{fmt::Display, ops::Range, process::exit};
 
 use colored::Colorize;
 
-pub fn log(prefix: &dyn std::fmt::Display, msg: &dyn std::fmt::Display) {
+pub fn log(prefix: &dyn Display, msg: &dyn Display) {
     eprintln!("passgen: {prefix}: {msg}");
 }
 
