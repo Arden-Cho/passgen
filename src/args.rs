@@ -84,12 +84,12 @@ impl Args {
         (
             entropy,
             match entropy {
-                0.0..35.0 => "very weak".red(),
-                35.0..59.0 => "weak".yellow(),
-                59.0..79.0 => "good".blue(),
-                79.0.. => "strong".green(),
+                0.0..35.0 => "very weak".red().bold(),
+                35.0..59.0 => "weak".yellow().bold(),
+                59.0..79.0 => "good".blue().bold(),
+                79.0.. => "strong".green().bold(),
                 _ => {
-                    panic!("BUG: Args::get_entropy() returned {entropy}")
+                    unreachable!("BUG: Args::get_entropy")
                 }
             },
         )
