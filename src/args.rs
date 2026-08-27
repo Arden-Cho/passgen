@@ -1,4 +1,4 @@
-use std::num::{NonZero, NonZeroU8};
+use std::num::NonZeroU8;
 
 use clap::Parser;
 use colored::{ColoredString, Colorize};
@@ -71,8 +71,8 @@ pub struct AppArgs {
 }
 
 impl AppArgs {
-    const DEFAULT_PASSPHRASE_LENGTH: NonZeroU8 = NonZero::new(6).unwrap();
-    const DEFAULT_PASSWORD_LENGTH: NonZeroU8 = NonZero::new(16).unwrap();
+    const DEFAULT_PASSPHRASE_LENGTH: NonZeroU8 = NonZeroU8::new(6).unwrap();
+    const DEFAULT_PASSWORD_LENGTH: NonZeroU8 = NonZeroU8::new(16).unwrap();
 
     pub fn from_cli(mut args: CliArgs) -> AppArgs {
         let length = args
