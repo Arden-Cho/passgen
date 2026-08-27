@@ -3,7 +3,7 @@ use std::num::NonZeroU8;
 use clap::Parser;
 use colored::{ColoredString, Colorize};
 
-use crate::utils::{fatal, log_warn};
+use crate::{utils::fatal, wordlist};
 
 /// A password generator
 ///
@@ -18,15 +18,15 @@ pub struct CliArgs {
     upper: bool,
 
     /// Include lowercase characters
-    #[arg(short, long)]
+    #[arg(short, long, conflicts_with = "passphrase")]
     lower: bool,
 
     /// Include numbers
-    #[arg(short, long)]
+    #[arg(short, long, conflicts_with = "passphrase")]
     numbers: bool,
 
     /// Include special characters [!@#$%^&*]
-    #[arg(short, long)]
+    #[arg(short, long, conflicts_with = "passphrase")]
     special: bool,
 
     /// Exclude ambiguous characters [l1I0O]
@@ -85,12 +85,12 @@ impl AppArgs {
                 }
             })
             .get();
-        if args.active_group_count() == 0 {
+        if args.active_group_count() == 0 && !args.passphrase {
             args.upper = true;
             args.lower = true;
             args.numbers = true;
         }
-        if args.active_group_count() > length {
+        if args.active_group_count() > length && !args.passphrase {
             fatal(
                 "generating a password of this length is impossible with the chosen groups (see --help)",
             );
@@ -108,6 +108,7 @@ impl AppArgs {
     }
 
     pub fn get_charset(&self) -> Vec<u8> {
+        assert!(!self.passphrase);
         let mut bytes = Vec::with_capacity(70);
         if self.upper {
             bytes.extend_from_slice(b"QWERTYUPASDFGHJKLZXCVBNM");
@@ -133,15 +134,21 @@ impl AppArgs {
         bytes
     }
 
-    pub fn get_entropy(&self) -> (f64, ColoredString) {
-        let entropy = (self.get_charset().len() as f64).log2() * (self.length as f64);
+    pub fn get_entropy(&self) -> (f64, (ColoredString, u8)) {
+        let entropy = (if self.passphrase {
+            wordlist::WORDS.len()
+        } else {
+            self.get_charset().len()
+        } as f64)
+            .log2()
+            * (self.length as f64);
         (
             entropy,
             match entropy {
-                0.0..35.0 => "very weak".red().bold(),
-                35.0..59.0 => "weak".yellow().bold(),
-                59.0..79.0 => "good".blue().bold(),
-                79.0.. => "strong".green().bold(),
+                0.0..35.0 => ("very weak".red().bold(), 0),
+                35.0..59.0 => ("weak".yellow().bold(), 1),
+                59.0..79.0 => ("good".blue().bold(), 2),
+                79.0.. => ("strong".green().bold(), 3),
                 _ => {
                     unreachable!("BUG: Args::get_entropy")
                 }
