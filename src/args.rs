@@ -27,6 +27,10 @@ pub struct Args {
     #[arg(short, long)]
     pub special: bool,
 
+    /// Exclude ambiguous characters [l1I0O]
+    #[arg(short = 'a', long)]
+    pub no_ambiguous: bool,
+
     /// The length of the password
     #[arg(short = 'L', long, default_value_t = 16)]
     pub length: u8,
@@ -65,13 +69,22 @@ impl Args {
     pub fn get_charset(&self) -> Vec<u8> {
         let mut bytes = Vec::with_capacity(70);
         if self.upper {
-            bytes.extend_from_slice(b"QWERTYUIOPASDFGHJKLZXCVBNM");
+            bytes.extend_from_slice(b"QWERTYUPASDFGHJKLZXCVBNM");
+            if !self.no_ambiguous {
+                bytes.extend_from_slice(b"IO");
+            }
         }
         if self.lower {
-            bytes.extend_from_slice(b"qwertyuiopasdfghjklzxcvbnm");
+            bytes.extend_from_slice(b"qwertyuiopasdfghjkzxcvbnm");
+            if !self.no_ambiguous {
+                bytes.extend_from_slice(b"l");
+            }
         }
         if self.numbers {
-            bytes.extend_from_slice(b"1234567890");
+            bytes.extend_from_slice(b"23456789");
+            if !self.no_ambiguous {
+                bytes.extend_from_slice(b"01");
+            }
         }
         if self.special {
             bytes.extend_from_slice(b"!@#$%^&*");
