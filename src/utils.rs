@@ -1,4 +1,4 @@
-use std::{process::exit, ops::Range};
+use std::{ops::Range, process::exit};
 
 use colored::Colorize;
 
@@ -17,18 +17,16 @@ pub fn fatal(msg: &str) -> ! {
 
 pub fn random_range_usize(range: Range<usize>) -> usize {
     assert!(range.end > range.start);
-    let threshold = usize::MAX - (range.end - range.start).wrapping_neg() % (range.end - range.start);
+    let threshold =
+        usize::MAX - (range.end - range.start).wrapping_neg() % (range.end - range.start);
     loop {
         let mut bytes = [0u8; std::mem::size_of::<usize>()];
-        getrandom::fill(&mut bytes).is_err().then(|| fatal("failed to obtain secure randomness"));
+        getrandom::fill(&mut bytes)
+            .is_err()
+            .then(|| fatal("failed to obtain secure randomness"));
         let r = usize::from_le_bytes(bytes);
         if r <= threshold {
             return range.start + r % (range.end - range.start);
         }
     }
-}
-
-
-pub fn calc_entropy(length: f64, pool_size: f64) -> f64 {
-    pool_size.log2() * length
 }

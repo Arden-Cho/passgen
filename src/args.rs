@@ -1,12 +1,12 @@
 use clap::Parser;
+use colored::{ColoredString, Colorize};
 
 use crate::utils::{fatal, log_warn};
 
-
 /// A password generator
-/// 
+///
 /// If no option is specified the program is run as below
-/// 
+///
 /// passgen -ulnL 16
 #[derive(Parser, Clone)]
 #[command(version, about)]
@@ -32,7 +32,7 @@ pub struct Args {
     pub length: u8,
 
     /// Output the ESTIMATED entropy of the password
-    /// 
+    ///
     /// This could give you a rough idea of how strong the password generated is.
     #[arg(short, long)]
     pub entropy: bool,
@@ -45,7 +45,9 @@ impl Args {
 
     fn validate(&self) {
         if self.active_group_count() > self.length {
-            fatal("generating a password of this length is impossible with the chosen groups (see --help)");
+            fatal(
+                "generating a password of this length is impossible with the chosen groups (see --help)",
+            );
         }
         if self.length < 8 {
             log_warn("weak password - a password with a length < 8 could be easily brute-forced");
@@ -75,6 +77,22 @@ impl Args {
             bytes.extend_from_slice(b"!@#$%^&*");
         }
         bytes
+    }
+
+    pub fn get_entropy(&self) -> (f64, ColoredString) {
+        let entropy = (self.get_charset().len() as f64).log2() * (self.length as f64);
+        (
+            entropy,
+            match entropy {
+                0.0..35.0 => "very weak".red(),
+                35.0..59.0 => "weak".yellow(),
+                59.0..79.0 => "good".blue(),
+                79.0.. => "strong".green(),
+                _ => {
+                    panic!("BUG: Args::get_entropy() returned {entropy}")
+                }
+            },
+        )
     }
 
     pub fn normalize(mut self) -> Self {
