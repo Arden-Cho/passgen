@@ -1,14 +1,10 @@
 use crate::{
     args::AppArgs,
-    password_strength::PasswordStrength,
-    utils::{log_warn, random_range_usize},
+    utils::random_range_usize,
     wordlist::{self, WORDS},
 };
 
 pub fn generate(args: &AppArgs) -> String {
-    if args.get_entropy().1 <= PasswordStrength::Weak {
-        log_warn("this is a weak password");
-    }
     if args.passphrase {
         generate_passphrase(args)
     } else {
